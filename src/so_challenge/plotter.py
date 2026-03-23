@@ -6,8 +6,11 @@ Consumes data prepared by data_fetcher and annotates plots with milestone marker
 
 from __future__ import annotations
 
+from datetime import datetime
+
 import matplotlib
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import pandas as pd
 
 matplotlib.use("Agg")  # non-interactive backend for headless environments
@@ -33,34 +36,36 @@ def plot_monthly_questions(
     """
     fig, ax = plt.subplots(figsize=(14, 6))
 
-    x = range(len(df))
+    dates = [datetime.strptime(ym, "%Y-%m") for ym in df["year_month"]]
     y = df["question_count"].values
 
     # Primary series
-    ax.plot(x, y, label="Monthly questions")
+    ax.plot(dates, y, label="Monthly questions", alpha=0.7)
 
     # 12-month rolling average
     rolling = df["question_count"].rolling(window=12, min_periods=1).mean()
-    ax.plot(x, rolling.values, label="12-month rolling average")
+    ax.plot(dates, rolling.values, label="12-month rolling average", linewidth=2)
 
     # Milestone markers
-    ym_to_x = {ym: i for i, ym in enumerate(df["year_month"])}
     for ms in milestones:
-        xi = ym_to_x.get(ms["date"])
-        if xi is not None:
-            ax.axvline(xi, color="red", linestyle="--", alpha=0.6)
-            ax.text(
-                xi,
-                ax.get_ylim()[1],
-                ms["label"],
-                rotation=90,
-                verticalalignment="top",
-                fontsize=8,
-            )
+        ms_date = datetime.strptime(ms["date"], "%Y-%m")
+        ax.axvline(ms_date, color="red", linestyle="--", alpha=0.6)
+        ax.text(
+            ms_date,
+            ax.get_ylim()[1],
+            ms["label"],
+            rotation=90,
+            verticalalignment="top",
+            fontsize=8,
+        )
+
+    ax.xaxis.set_major_locator(mdates.YearLocator())
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
+    fig.autofmt_xdate()
 
     ax.set_xlabel("Year")
-    ax.set_ylabel("Count")
-    ax.set_title("Monthly Stack Overflow Question Counts")
+    ax.set_ylabel("Question Count")
+    ax.set_title("Monthly Stack Overflow Question Counts (2008–2024)")
     ax.legend()
 
     fig.tight_layout()
