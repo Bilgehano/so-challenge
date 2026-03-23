@@ -8,3 +8,7 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Data cache and output
+so_questions.csv
+so_trends.png
