@@ -557,7 +557,7 @@ wheels = [
 [[package]]
 name = "so-challenge"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "matplotlib" },
     { name = "pandas" },
