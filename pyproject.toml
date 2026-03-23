@@ -1,0 +1,16 @@
+[project]
+name = "so-challenge"
+version = "0.1.0"
+description = "Stack Overflow data collection and visualization project"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pandas",
+    "matplotlib",
+    "requests",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+]
